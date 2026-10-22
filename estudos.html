@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#7c3aed">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Estudos">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Estudos · Repertório</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="stylesheet" href="estudos.css">
+</head>
+<body>
+<main class="shell">
+  <header class="topbar">
+    <a class="back" href="cifras.html" aria-label="Voltar ao repertório">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></svg><span>Repertório</span>
+    </a>
+    <div class="brand"><span class="brand-mark"><svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 4v16M12 4v16M17 4v16M5 4v9M10 4v9M15 4v9M20 4v9"/></svg></span><span><small>Módulo</small>Estudos <span class="app-ver" data-app-ver aria-label="Versão"></span></span></div>
+    <div class="top-progress">
+      <div class="global-metro" aria-label="Metrônomo">
+        <button class="global-metro-play" id="global-metro-play" onclick="toggleGlobalMetronome()" title="Tocar metrônomo" aria-label="Tocar metrônomo">&#9654;</button>
+        <button onclick="changeBpm(-5)" title="Diminuir 5 BPM" aria-label="Diminuir 5 BPM">&minus;</button>
+        <b id="global-metro-bpm">80</b><small>BPM</small>
+        <button onclick="changeBpm(5)" title="Aumentar 5 BPM" aria-label="Aumentar 5 BPM">+</button>
+        <span class="global-metro-dots" id="global-metro-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <button onclick="openMetroPanel()" title="Configurar metrônomo" aria-label="Configurar metrônomo">&#9881;</button>
+      </div>
+      <div class="streak">🔥 <b id="streak">0</b> dias</div>
+      <div class="goal-wrap"><button class="goal-ring" id="goal-ring" type="button" onclick="abrirMeta(event)" title="Meta diária"><span id="goal-value">0/5</span></button><div class="goal-menu" id="goal-menu" hidden></div></div>
+    </div>
+  </header>
+
+  <nav class="nav" aria-label="Áreas de estudo">
+    <div class="nav-tabs">
+    <button class="nav-btn active" data-view="today">Hoje</button>
+    <button class="nav-btn" data-view="plan">Plano</button>
+    <button class="nav-btn" data-view="timbres">Timbres</button>
+    <button class="nav-btn" data-view="evolucao">Evolução</button>
+    <button class="nav-btn" data-view="chords">Voicings</button>
+    <button class="nav-btn" data-view="transitions">Progressões</button>
+    <button class="nav-btn" data-view="ear">Ouvido</button>
+    <button class="nav-btn" data-view="scales">Escalas</button>
+    <button class="nav-btn" data-view="technique">Técnica</button>
+    <button class="nav-btn" data-view="banda">Banda</button>
+    <button class="nav-btn" data-view="songs">Repertório</button>
+    <button class="nav-btn" data-view="culto">Culto</button>
+    </div>
+    <div class="nav-tools">
+    <label class="key-picker"><span>Tom</span><select id="study-key" onchange="setStudyKey(this.value)"><option value="ALL" selected>12 tons</option><option>C</option><option>Db</option><option>D</option><option>Eb</option><option>E</option><option>F</option><option>F#</option><option>G</option><option>Ab</option><option>A</option><option>Bb</option><option>B</option></select></label>
+    <label class="key-picker cycle-picker" id="cycle-picker"><span>Ciclo</span><select id="cycle-order" onchange="setCycleOrder(this.value)"><option value="fifths">Quintas</option><option value="fourths">Quartas</option><option value="chromatic">Cromático</option><option value="weak">Mais fracos</option><option value="random">Sorteio</option></select></label>
+    <label class="key-picker" id="kb-picker"><span>Teclado</span><select id="kb-profile" onchange="setKbProfile(this.value)"><option value="full">Completo</option><option value="mini">25 teclas</option></select></label>
+    <button class="btn ghost" id="kb-cal-btn" type="button" onclick="openKbCal()" hidden>Calibrar</button>
+    </div>
+  </nav>
+
+  <section class="view active" id="view-today">
+    <section class="plan-today" id="plan-today"></section>
+    <section class="language-today" id="language-today" aria-label="Linguagem musical de hoje"></section>
+    <section class="tone-today" id="tone-today" aria-label="Prática de timbre de hoje"></section>
+
+    <div class="hero">
+      <div class="hero-main">
+        <div class="eyebrow">Harmonia aplicada</div>
+        <h1>Conduza vozes.<br>Crie movimento.</h1>
+        <p>Voicings abertos, tensões, acordes sem fundamental e progressões completas com o menor deslocamento possível.</p>
+        <div class="hero-actions">
+          <button class="btn primary" onclick="startExercise('axis-loop')">▶ Estudar progressão</button>
+          <button class="btn ghost" onclick="showView('chords')">Explorar voicings</button>
+        </div>
+      </div>
+      <div class="hero-stats">
+        <div class="stat"><div class="stat-value" id="minutes-stat">0</div><div class="stat-label">minutos praticados</div></div>
+        <div class="stat"><div class="stat-value" id="mastered-stat">0</div><div class="stat-label">voicings dominados</div></div>
+        <div class="stat"><div class="stat-value" id="sessions-stat">0</div><div class="stat-label">sessões</div></div>
+      </div>
+    </div>
+
+    <div class="ledger" id="ledger"></div>
+    <div class="ponte-card" id="ponte-card" hidden></div>
+
+    <section class="review-card" id="review-card"></section>
+
+    <div class="section-head"><div><div class="eyebrow">Domínio por tom</div><h2>Mapa dos 12 tons</h2></div><p id="heat-note"></p></div>
+    <div class="heat-strip" id="key-heat"></div>
+
+    <div class="section-head"><div><div class="eyebrow">Técnica harmônica</div><h2>Escolha o foco</h2></div><p id="tone-context">As sessões percorrem os 12 tons</p></div>
+    <div class="path-grid" id="path-grid"></div>
+
+    <div class="section-head"><div><div class="eyebrow">Recomendado</div><h2>Progressões para hoje</h2></div><button class="btn ghost" onclick="showView('transitions')">Ver todas</button></div>
+    <div class="exercise-grid" id="today-exercises"></div>
+  </section>
+
+  <section class="view" id="view-plan">
+    <div class="section-head"><div><div class="eyebrow">12 meses</div><h1>O plano</h1></div><p>A fase avança quando o material passa pelos 12 tons — não quando o mês vira</p></div>
+    <div class="plan-rule" id="plan-rule"></div>
+    <section class="language-plan" id="language-plan" aria-label="Avanços entre gêneros"></section>
+    <section class="review-card" id="exam-card" style="margin-top:14px"></section>
+    <div class="section-head"><div><div class="eyebrow">Ciclo semanal</div><h2>Cada dia tem um trabalho</h2></div><p>Domingo é aplicação, não estudo</p></div>
+    <div class="week-strip" id="week-strip"></div>
+    <div class="section-head"><div><div class="eyebrow">Fases</div><h2>Do fundamento à fluência</h2></div></div>
+    <div class="phase-grid" id="plan-grid"></div>
+  </section>
+
+  <section class="view" id="view-chords">
+    <div class="section-head"><div><div class="eyebrow">Vocabulário harmônico</div><h1>Voicings e tríades</h1></div><p>Do fundamento aos sistemas drop e tensões avançadas</p></div>
+    <div class="filters" id="chord-filters">
+      <button class="filter active" data-filter="all">Todos</button>
+      <button class="filter" data-filter="basic">Tríades</button>
+      <button class="filter" data-filter="tetrad">Tétrades</button>
+      <button class="filter" data-filter="inversion">Inversões</button>
+      <button class="filter" data-filter="drop">Drops</button>
+      <button class="filter" data-filter="open">Abertos</button>
+      <button class="filter" data-filter="rootless">Shell / rootless</button>
+      <button class="filter" data-filter="quartal">Quartais</button>
+      <button class="filter" data-filter="tension">Tensões</button>
+      <button class="filter" data-filter="guide">Notas-guia</button>
+      <button class="filter" data-filter="block">Blocos</button>
+      <button class="filter" data-filter="reharm">Rearmonização</button>
+      <input class="search" id="chord-search" type="search" placeholder="Buscar acorde ou voicing…" autocomplete="off">
+    </div>
+    <div class="chord-grid" id="chord-grid"></div>
+  </section>
+
+  <section class="view" id="view-transitions">
+    <div class="section-head"><div><div class="eyebrow">Harmonia em movimento</div><h1>Progressões e condução</h1></div><div id="exercise-module-stat" class="module-stat-slot"></div></div>
+    <div class="exercise-grid" id="exercise-grid"></div>
+    <div class="section-head"><div><div class="eyebrow">Modulação sob demanda</div><h2>De um tom para outro, sorteado</h2></div><p>A ponte é construída na hora para o par que sair</p></div>
+    <div class="exercise-grid" id="mod-grid"></div>
+  </section>
+
+  <section class="view" id="view-ear">
+    <div class="section-head"><div><div class="eyebrow">Ouvido dentro da harmonia</div><h1>Reconhecer antes de ler</h1></div><p>Qualidade, intervalo, função, ditado — e cantar o grau</p></div>
+    <div class="ear-grid" id="ear-grid"></div>
+  </section>
+
+  <section class="view" id="view-scales">
+    <div class="section-head"><div><div class="eyebrow">Mapa melódico</div><h1>Escalas e modos</h1></div><div id="scale-module-stat" class="module-stat-slot"></div></div>
+    <div class="filters" id="scale-filters">
+      <button class="filter active" data-scale-filter="all">Todas</button>
+      <button class="filter" data-scale-filter="tonal">Maiores e menores</button>
+      <button class="filter" data-scale-filter="mode">Modos gregos</button>
+      <button class="filter" data-scale-filter="pentatonic">Pentatônicas</button>
+      <button class="filter" data-scale-filter="advanced">Simétricas e alteradas</button>
+    </div>
+    <div class="scale-grid" id="scale-grid"></div>
+  </section>
+
+  <section class="view" id="view-songs">
+    <div class="section-head"><div><div class="eyebrow">Do repertório para o estudo</div><h1>Suas músicas</h1></div><div id="song-module-stat" class="module-stat-slot"></div></div>
+    <div class="filters">
+      <select class="search" id="rep-filter" aria-label="Repertório" style="margin-left:0;min-width:200px"><option value="all">Todos os repertórios</option></select>
+      <input class="search" id="song-search" type="search" placeholder="Buscar música…" autocomplete="off">
+    </div>
+    <section class="review-card" id="leitura-card" style="margin-bottom:14px"></section>
+    <p class="song-source" id="song-source"></p>
+    <div class="song-grid" id="song-grid"><div class="empty">Abra esta aba para carregar o repertório.</div></div>
+  </section>
+
+  <section class="view" id="view-culto">
+    <div class="section-head"><div><div class="eyebrow">Do domingo para a semana</div><h1>Preparar o culto</h1></div><p>O repertório da escala vira o estudo da semana</p></div>
+    <div id="culto-prep"></div>
+    <div class="section-head"><div><div class="eyebrow">O momento sem cifra fixa</div><h2>Ministração</h2></div><p>Dinâmica medida pelo MIDI</p></div>
+    <section class="review-card" id="minist-card"></section>
+  </section>
+
+  <section class="view" id="view-evolucao">
+    <div class="section-head"><div><div class="eyebrow">Semana a semana</div><h1>Evolução</h1></div><p>As últimas 12 semanas</p></div>
+    <div id="evo-body"></div>
+  </section>
+
+  <section class="view" id="view-banda">
+    <div class="view-head">
+      <h2>Improviso e leitura de banda</h2>
+      <p class="muted">Dezesseis compassos com acompanhamento. Aqui não há acorde certo por item — mede-se o comportamento na passagem inteira: o que você tocou, quanto tocou e quando ficou quieto. Precisa do teclado MIDI.</p>
+    </div>
+    <div class="grid" id="banda-grid"></div>
+  </section>
+
+  <section class="view" id="view-technique">
+    <div class="section-head"><div><div class="eyebrow">Mecânica musical</div><h1>Agilidade para frases</h1></div><div id="technique-module-stat" class="module-stat-slot"></div></div>
+    <div class="filters" id="technique-filters">
+      <button class="filter active" data-tech-filter="all">Todos</button>
+      <button class="filter" data-tech-filter="independence">Independência</button>
+      <button class="filter" data-tech-filter="sequence">Sequências</button>
+      <button class="filter" data-tech-filter="phrase">Fraseado</button>
+      <button class="filter" data-tech-filter="arpeggio">Arpejos</button>
+      <button class="filter" data-tech-filter="lefthand">Mão esquerda</button>
+      <button class="filter" data-tech-filter="dinamica">Dinâmica</button>
+    </div>
+    <div class="technique-grid" id="technique-grid"></div>
+  </section>
+  <section class="view" id="view-timbres" aria-label="Estudo de timbres e ferramentas">
+    <div id="tone-study"></div>
+  </section>
+</main>
+
+<div class="overlay" id="detail-overlay" role="dialog" aria-modal="true" aria-labelledby="detail-name">
+  <div class="sheet">
+    <div class="sheet-head"><div><div class="eyebrow">Mapa do voicing</div><h2 id="detail-name"></h2></div><button class="sheet-close" onclick="closeOverlay('detail-overlay')" aria-label="Fechar">×</button></div>
+    <div class="chord-detail" id="chord-detail"></div>
+  </div>
+</div>
+
+<div class="overlay" id="setup-overlay" role="dialog" aria-modal="true" aria-labelledby="setup-title">
+  <div class="sheet" style="max-width:560px"><div class="setup">
+    <div class="eyebrow">Nova sessão</div><h2 id="setup-title">Prepare seu treino</h2><p class="muted" id="setup-tone">O foco é manter a região e conduzir cada voz conscientemente.</p>
+    <div class="setup-section"><div class="setup-label">Foco</div><div class="choice-row" id="focus-choices"></div></div>
+    <div class="setup-section"><div class="setup-label">Duração</div><div class="choice-row" id="duration-choices"><button class="choice active" data-duration="3">3 min</button><button class="choice" data-duration="5">5 min</button><button class="choice" data-duration="10">10 min</button></div></div>
+    <div class="setup-section"><div class="setup-label">Exibição</div><div class="choice-row" id="degree-choices">
+      <button class="choice" data-degree="notes" type="button" onclick="setDegreeMode(false)" title="Nome do acorde, notas e teclado">Notas</button>
+      <button class="choice" data-degree="graus" type="button" onclick="setDegreeMode(true)" title="Pede o grau; as notas somem · G">Graus</button>
+    </div></div>
+    <div class="setup-section"><div class="setup-label">Modos</div><div class="choice-row">
+      <button class="choice" id="speak-choice" onclick="toggleSpeak()" title="Fala o grau em voz alta a cada troca">Falar o grau</button>
+      <button class="choice" id="hide-choice2" onclick="toggleInlineKeyboard()" title="Teclado fixo ao lado do acorde">Teclado fixo</button>
+      <button class="choice" id="chain-choice" onclick="toggleSessionChain()" title="Ao terminar, segue para a próxima trilha ou lote de revisão sem reabrir o setup">Encadear próximo</button>
+      <button class="choice" id="inv-choice" onclick="toggleInvLivre()" title="Qualquer inversão do grau vale. A nota cai se a mão andar mais que o caminho curto">Sua inversão</button>
+      <button class="choice" id="rito-choice" onclick="toggleOuvirCantar()" title="Na primeira vez de cada acorde: ouça, cante a fundamental, depois toque">Ouvir, cantar, tocar</button>
+    </div></div>
+    <div class="setup-section"><div class="setup-label">Camada de densidade</div><div class="choice-row" id="density-choices"></div></div>
+    <div class="setup-section"><div class="setup-label">Região e mãos</div><div class="choice-row" id="region-choices"></div></div>
+    <div class="setup-section"><div class="setup-label">Exigência do MIDI</div><div class="choice-row" id="strict-choices"></div></div>
+    <div class="setup-section"><div class="setup-label">Dinâmica <small style="font-weight:400;opacity:.7">— precisa do teclado MIDI</small></div><div class="choice-row" id="din-choices"></div></div>
+    <div class="setup-section"><div class="setup-label">Metrônomo</div><div class="choice-row" style="align-items:center;gap:9px"><button class="choice" id="metro-choice">Pulso sonoro</button><div class="bpm-box"><button type="button" onclick="changeBpm(-5)">&minus;</button><b id="setup-bpm">80</b><small>BPM</small><button type="button" onclick="changeBpm(5)">+</button></div></div></div>
+    <div class="setup-section"><div class="setup-label">Avanço automático</div><div class="choice-row" id="advance-choices"><button class="choice" data-adv="0">Manual</button><button class="choice" data-adv="4">1 compasso</button><button class="choice" data-adv="8">2 compassos</button><button class="choice" data-adv="16">4 compassos</button></div></div>
+    <div class="setup-foot"><button class="btn" onclick="closeOverlay('setup-overlay')">Cancelar</button><button class="btn primary" onclick="startSession()">Começar</button></div>
+  </div></div>
+</div>
+
+<div class="overlay" id="session-overlay" role="dialog" aria-modal="true" aria-label="Sessão de prática">
+  <div class="session">
+    <div class="session-top"><button class="sheet-close" onclick="requestEndSession()" aria-label="Encerrar">×</button><div><div class="session-title" id="session-title">Prática</div><div class="session-pos" id="session-pos"></div></div>
+      <div class="view-mode" role="group" aria-label="Exibição do acorde">
+        <button type="button" class="view-mode-btn active" id="session-mode-notes" onclick="setDegreeMode(false)" aria-pressed="true">Notas</button>
+        <button type="button" class="view-mode-btn" id="session-mode-degrees" onclick="setDegreeMode(true)" aria-pressed="false">Graus</button>
+      </div>
+      <div class="session-clock"><div class="session-time" id="session-time">00:00</div><button class="btn ghost" type="button" id="session-pause" onclick="toggleSessionPause()">Pausar</button></div></div>
+    <div class="session-body">
+      <div class="prompt-side">
+        <div class="prompt-label" id="prompt-label">Forme o acorde</div>
+        <div class="prompt-chord" id="prompt-chord">G</div>
+        <div class="prompt-notes" id="prompt-notes"></div>
+        <div class="prompt-fingers" id="prompt-fingers"></div>
+        <div class="response-time" id="response-time"></div>
+        <div class="prompt-tip" id="prompt-tip"></div>
+        <div class="prompt-actions">
+          <button class="btn" onclick="peekVoicing()">Ver voicing · D</button>
+          <button class="btn" onclick="playCurrentChord()">Ouvir · O</button>
+          <button class="btn" id="density-btn" onclick="stepDensity(1)" title="Próxima camada · C (shift+C volta)">Camada</button>
+          <button class="btn" id="ear-btn" onclick="session&&session.ear?revealEar():toggleEar()">Modo ouvido</button>
+        </div>
+        <div class="prompt-kb" id="prompt-kb"></div>
+        <div class="prompt-next" id="prompt-next"></div>
+      </div>
+      <div class="practice-side" id="practice-side"></div>
+    </div>
+    <div class="session-transport">
+      <div class="transport-main">
+        <button class="transport-btn" id="transport-play" onclick="toggleTransport()" title="Tocar/pausar pulso (P)">&#9654;</button>
+        <button class="transport-btn" id="transport-sound" onclick="toggleSessionSound()" title="Som do metrônomo (M)">&#128266;</button>
+        <div class="bpm-box"><button type="button" onclick="changeBpm(-5)" title="-5 BPM">&minus;</button><b id="bpm-value">80</b><small>BPM</small><button type="button" onclick="changeBpm(5)" title="+5 BPM">+</button></div>
+        <button class="transport-btn" style="width:auto;padding:0 10px;font-size:11px" onclick="tapTempo()" title="Bater o andamento">TAP</button>
+        <div class="beat-dots" id="beat-dots"><i></i><i></i><i></i><i></i></div>
+        <button class="transport-btn" onclick="openMetroPanel()" title="Configurar metrônomo">&#9881;</button>
+        <button class="transport-btn" id="rec-btn" onclick="toggleRec()" title="Gravar esta passagem">&#9679;</button>
+        <button class="transport-btn" id="rec-play" style="display:none" title="Ouvir a gravação">&#9199;</button>
+        <button class="transport-btn" id="midi-btn" onclick="toggleMidi()" title="Teclado MIDI">&#127929;</button>
+        <span class="midi-note" id="midi-note"></span>
+        <div class="groove-grid" id="groove-grid" style="display:none" aria-hidden="true"></div>
+      </div>
+      <div class="transport-advance">
+        <span class="adv-note" id="adv-note">avanço manual</span>
+        <div class="adv-row" id="adv-row">
+          <button class="adv" data-adv="0" onclick="setAdvance(0)">Manual</button>
+          <button class="adv" data-adv="4" onclick="setAdvance(4)">1 compasso</button>
+          <button class="adv" data-adv="8" onclick="setAdvance(8)">2 compassos</button>
+          <button class="adv" data-adv="16" onclick="setAdvance(16)">4 compassos</button>
+        </div>
+      </div>
+    </div>
+    <div class="session-foot"><span class="rate-label" id="rate-label">Como ficou?</span><span class="shortcut-hint">espaço próximo · ←/→ navega · 1·2·3 avalia · G grau · C camada · H mãos · R ouvido · D voicing · M som · P pulso</span><button class="rate hard" onclick="rateCurrent(0)">Repetir · 1</button><button class="rate" onclick="rateCurrent(1)">Quase · 2</button><button class="rate good" onclick="rateCurrent(2)">Firme · 3</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="exam-overlay" role="dialog" aria-modal="true" aria-label="Teste de fluência">
+  <div class="sheet" style="max-width:660px">
+    <div class="sheet-head"><div><div class="eyebrow">Teste mensal</div><h2>Fluência</h2></div><button class="sheet-close" onclick="exam=null;examStep=null;closeOverlay('exam-overlay')" aria-label="Fechar">×</button></div>
+    <div class="exam-live" id="exam-live"></div>
+  </div>
+</div>
+
+<div class="overlay" id="journal-overlay" role="dialog" aria-modal="true" aria-label="Diário de culto">
+  <div class="sheet" style="max-width:600px">
+    <div class="sheet-head"><div><div class="eyebrow">Domingo</div><h2>Diário de culto</h2></div><button class="sheet-close" onclick="closeOverlay('journal-overlay')" aria-label="Fechar">×</button></div>
+    <div class="journal-live" id="journal-live"></div>
+  </div>
+</div>
+
+<div class="overlay" id="leitura-overlay" role="dialog" aria-modal="true" aria-label="Leitura à primeira vista">
+  <div class="sheet" style="max-width:600px">
+    <div class="sheet-head"><div><div class="eyebrow">Primeira vista</div><h2>Leia e toque</h2></div><button class="sheet-close" onclick="stopLeitura()" aria-label="Fechar">×</button></div>
+    <div class="banda-live" id="leitura-live"></div>
+  </div>
+</div>
+
+<div class="overlay" id="banda-overlay" role="dialog" aria-modal="true" aria-label="Improviso e banda">
+  <div class="sheet" style="max-width:560px">
+    <div class="sheet-head"><div><div class="eyebrow">Passagem</div><h2>Toque por cima</h2></div><button class="sheet-close" onclick="stopBanda()" aria-label="Fechar">×</button></div>
+    <div class="banda-live" id="banda-live"></div>
+  </div>
+</div>
+
+<div class="overlay" id="minist-overlay" role="dialog" aria-modal="true" aria-label="Ministração">
+  <div class="sheet" style="max-width:560px">
+    <div class="sheet-head"><div><div class="eyebrow">Ministração</div><h2>Siga a curva</h2></div><button class="sheet-close" onclick="stopMinist()" aria-label="Fechar">×</button></div>
+    <div class="banda-live" id="minist-live"></div>
+  </div>
+</div>
+
+<div class="overlay" id="ear-overlay" role="dialog" aria-modal="true" aria-label="Treino de ouvido">
+  <div class="sheet" style="max-width:620px">
+    <div class="sheet-head"><div><div class="eyebrow">Treino de ouvido</div><h2>Identifique pelo som</h2></div><button class="sheet-close" onclick="hideEar()" aria-label="Recolher">×</button></div>
+    <div class="ear-live" id="ear-live"></div>
+  </div>
+</div>
+
+<div class="overlay" id="metro-overlay" role="dialog" aria-modal="true" aria-labelledby="metro-title">
+  <div class="sheet" style="max-width:600px">
+    <div class="sheet-head"><div><div class="eyebrow">Metrônomo</div><h2 id="metro-title">Pulso, subdivisão e progressão de tempo</h2></div><button class="sheet-close" onclick="closeOverlay('metro-overlay')" aria-label="Fechar">×</button></div>
+    <div class="metro-panel" id="metro-panel"></div>
+  </div>
+</div>
+
+<div class="overlay" id="data-overlay" role="dialog" aria-modal="true" aria-labelledby="data-title">
+  <div class="sheet" style="max-width:620px">
+    <div class="sheet-head"><div><div class="eyebrow">Progresso</div><h2 id="data-title">Backup e transferência</h2></div><button class="sheet-close" onclick="closeOverlay('data-overlay')" aria-label="Fechar">×</button></div>
+    <div class="data-panel" id="data-panel"></div>
+  </div>
+</div>
+
+<div class="overlay" id="peek-overlay" role="dialog" aria-modal="true" aria-labelledby="peek-name">
+  <div class="sheet" style="max-width:640px">
+    <div class="sheet-head"><div><div class="eyebrow">Conferir voicing</div><h2 id="peek-name"></h2></div><button class="sheet-close" onclick="closeOverlay('peek-overlay')" aria-label="Fechar">×</button></div>
+    <div class="peek-body" id="peek-body"></div>
+  </div>
+</div>
+
+<div class="overlay" id="kb-overlay" role="dialog" aria-modal="true" aria-labelledby="kb-cal-title">
+  <div class="sheet" style="max-width:480px">
+    <div class="sheet-head"><div><div class="eyebrow">M-VAVE e outros 25 teclas</div><h2 id="kb-cal-title">Tessitura</h2></div><button class="sheet-close" onclick="closeKbCal()" aria-label="Fechar">×</button></div>
+    <div class="setup" id="kb-cal-body"></div>
+  </div>
+</div>
+
+<div class="overlay" id="summary-overlay" role="dialog" aria-modal="true" aria-labelledby="summary-title"><div class="sheet" style="max-width:520px"><div class="summary" id="summary"></div></div></div>
+
+<div class="overlay" id="scale-overlay" role="dialog" aria-modal="true" aria-labelledby="scale-name">
+  <div class="sheet">
+    <div class="sheet-head"><div><div class="eyebrow">Mapa da escala</div><h2 id="scale-name"></h2></div><button class="sheet-close" onclick="closeOverlay('scale-overlay')" aria-label="Fechar">×</button></div>
+    <div class="scale-detail" id="scale-detail"></div>
+  </div>
+</div>
+
+<div class="overlay" id="technique-overlay" role="dialog" aria-modal="true" aria-label="Treino técnico">
+  <div class="sheet" style="max-width:620px">
+    <div class="sheet-head"><div><div class="eyebrow" id="technique-eyebrow">Treino no seu tempo</div><h2 id="technique-heading">Precisão antes da velocidade</h2></div>
+      <div class="tech-midi-bar">
+        <button class="transport-btn" id="tech-midi-btn" type="button" onclick="toggleMidi()" title="Teclado MIDI">&#127929;</button>
+        <span class="midi-note" id="tech-midi-note"></span>
+      </div>
+      <button class="sheet-close" onclick="stopTechnique()" aria-label="Encerrar">×</button>
+    </div>
+    <div class="technique-live" id="technique-live"></div>
+  </div>
+</div>
+
+<div class="block-bar" id="block-bar"></div>
+
+<script src="versao.js"></script>
+<script src="metronomo.js"></script>
+<script src="graus.js"></script>
+<script src="estudos.js"></script>
+<script src="estudos-ouvido.js"></script>
+<script src="estudos-banda.js"></script>
+<script src="estudos-culto.js"></script>
+<script src="estudos-timbres.js"></script>
+<script src="estudos-plano.js"></script>
+</body>
+</html>
